@@ -56,9 +56,9 @@ public class Bereshit_101 {
         System.out.println("vs , desired_vs , hs , desired_hs , alt , ang , acc , fuel");
         double NN = 0.7; // rate[0,1]
         SpaceCraft craft = new SpaceCraft(vs, hs, ang, fuel, NN, dist, alt, time, dt, acc, weight);
+
         PID pid_h = new PID(0.0004, 0.00003, 0.02);
-        PID pid_v = new PID(0.004, 0.0003, 0.2);
-        PID pid = new PID(0.04, 0.003, 0.2);
+        PID pid_v = new PID(0.004, 0.0003, 0.012);
 
         double thrustIncrV = 0;
         double thrustIncrH = 0;
@@ -73,12 +73,6 @@ public class Bereshit_101 {
                 System.out.println(craft.getAlt() + ", " + craft.getVs() + ", " + desired_vs + ", " + craft.getHs() + ", " + desired_hs + ", " + craft.getAng() + ", " + craft.getAcc() + ", " + craft.getNN() + ", " + craft.getFuel());
             }
 
-
-            // brake slowly, a proper PID controller here is needed!
-
-//
-//            thrustIncrH = pid.update(craft.getVs() - 15, craft.getDt());
-//            craft.increaseThrust(thrustIncrH);
 
             if (craft.getHs() > 0) {
                 thrustIncrH = pid_h.update( craft.getHs() - desired_hs , craft.getDt());
@@ -128,5 +122,7 @@ public class Bereshit_101 {
 
             craft.computeNextStep();
         }
+        System.out.println(craft.getAlt() + ", " + craft.getVs()  + ", " + craft.getHs()  + ", " + craft.getAng() + ", " + craft.getAcc() + ", " + craft.getNN() + ", " + craft.getFuel());
+
     }
 }
