@@ -6,13 +6,12 @@ public class SpaceCraft {
     private double ang;
     private double fuel;
     private double NN;
-
-    double dist;
-    double alt;
-    double time;
-    double dt;
-    double acc;
-    double weight;
+    private double dist;
+    private double alt;
+    private  double time;
+    private  double dt;
+    private  double acc;
+    private double weight;
 
     public SpaceCraft(double vs, double hs, double ang, double fuel, double NN, double dist, double alt, double time, double dt, double acc, double weight) {
         this.weight = weight;
@@ -28,6 +27,7 @@ public class SpaceCraft {
         this.NN = NN;
     }
 
+    // increase thrust with [0,1] constrain
     public void increaseThrust(double inc) {
         double val = this.NN + inc;
         if (val >= 0 && val <= 1) {
@@ -42,6 +42,7 @@ public class SpaceCraft {
         }
     }
 
+    // increase angle with [0,90] constrain
     public void increaseAngle(double angInc) {
         double val = this.ang + angInc;
         if (val >= 0 && val <= 90) {
@@ -72,6 +73,8 @@ public class SpaceCraft {
         return ans;
     }
 
+
+    // physics computations
     public void computeNextStep() {
         // main computations
         double ang_rad = Math.toRadians(ang);

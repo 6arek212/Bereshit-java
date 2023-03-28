@@ -29,9 +29,4 @@ public class PID {
     }
 
 
-    public void reset() {
-        this.firstRun = true;
-        this.integralError = 0;
-    }
-
 }

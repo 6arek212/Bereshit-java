@@ -15,8 +15,8 @@ public class Bereshit_101 {
     public static final double SECOND_BURN = 0.009; //liter per sec 0.6 liter per m'
     public static final double ALL_BURN = MAIN_BURN + 8 * SECOND_BURN;
 
-
-    private static double getDhs(double alt) {
+    // desired horizontal speed based on altitude
+    private static double getDesiredHs(double alt) {
         double minAlt = 2000;
         double maxAlt = 30000;
         if (alt < minAlt)
@@ -28,7 +28,9 @@ public class Bereshit_101 {
         return norm * Moon.EQ_SPEED;
     }
 
-    private static double getDvs(double alt) {
+
+    // desired vertical speed based on altitude
+    private static double getDesiredVs(double alt) {
         if (alt > 8000)
             return 30;
         if (alt > 500)
@@ -47,7 +49,8 @@ public class Bereshit_101 {
         return 1;
     }
 
-    private static double getAng(double alt) {
+    // desired angel based on altitude
+    private static double getDesiredAngle(double alt) {
         if (alt > 1500)
             return 60;
         if (alt > 1200)
@@ -57,7 +60,7 @@ public class Bereshit_101 {
         return 0;
     }
 
-    // 14095, 955.5, 24.8, 2.0
+
     public static void main(String[] args) {
         System.out.println("Simulating Bereshit's Landing:");
         // starting point:
@@ -73,6 +76,8 @@ public class Bereshit_101 {
         double weight = WEIGHT_EMP + fuel;
         System.out.println("vs , desired_vs , hs , desired_hs , alt , ang , acc , fuel");
         double NN = 0.7; // rate[0,1]
+
+        // create a spacecraft with the starting conditions
         SpaceCraft craft = new SpaceCraft(vs, hs, ang, fuel, NN, dist, alt, time, dt, acc, weight);
 
         PID pid = new PID(0.014, 0.000000003, 0.2);
@@ -81,21 +86,28 @@ public class Bereshit_101 {
 
         // ***** main simulation loop ******
         while (craft.getAlt() > 0) {
-            double desired_vs = getDvs(craft.getAlt());
-            double desired_hs = getDhs(craft.getAlt());
-            double dsAngle = getAng(craft.getAlt());
+            // get the desired vs, hs, angle
+            double desired_vs = getDesiredVs(craft.getAlt());
+            double desired_hs = getDesiredHs(craft.getAlt());
+            double dsAngle = getDesiredAngle(craft.getAlt());
 
             if (time % 10 == 0 || craft.getAlt() < 100) {
                 System.out.println(craft.getAlt() + ", " + craft.getVs() + ", " + desired_vs + ", " + craft.getHs() + ", " + desired_hs + ", ang: " + craft.getAng() + " ,dang: " + dsAngle + ", " + craft.getAcc() + ", " + craft.getNN() + ", " + craft.getFuel());
             }
 
+            // this pid takes the sum of horizontal and vertical errors
             double thrustIncr = pid.update(craft.getVs() - desired_vs + craft.getHs() - desired_hs, craft.getDt());
+
+            // pid for the angel
             double angIncr = pid_ang.update(dsAngle - craft.getAng(), craft.getDt());
 
+            // adjust angle
             craft.increaseAngle(angIncr);
-            craft.increaseThrust(thrustIncr);
-            System.out.println("----------->" + angIncr + "  " + thrustIncr );
 
+            // adjust thrust
+            craft.increaseThrust(thrustIncr);
+
+            // physics stuff
             craft.computeNextStep();
         }
         System.out.println(craft.getAlt() + ", " + craft.getVs() + ", " + craft.getHs() + ", " + craft.getAng() + ", " + craft.getAcc() + ", " + craft.getNN() + ", " + craft.getFuel());
