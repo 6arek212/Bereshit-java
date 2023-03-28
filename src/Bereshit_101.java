@@ -98,7 +98,7 @@ public class Bereshit_101 {
             // this pid takes the sum of horizontal and vertical errors
             double thrustIncr = pid.update(craft.getVs() - desired_vs + craft.getHs() - desired_hs, craft.getDt());
 
-            // pid for the angel
+            // angel correction
             double angIncr = pid_ang.update(dsAngle - craft.getAng(), craft.getDt());
 
             // adjust angle
