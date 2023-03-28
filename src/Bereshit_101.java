@@ -29,15 +29,33 @@ public class Bereshit_101 {
     }
 
     private static double getDvs(double alt) {
-        if (alt > 2000)
-            return 24;
+        if (alt > 8000)
+            return 30;
         if (alt > 500)
+            return 24;
+        if (alt > 300)
             return 12;
         if (alt > 100)
-            return 8;
-        return 2;
+            return 6;
+
+        if (alt > 50)
+            return 3;
+
+        if (alt > 25)
+            return 2;
+
+        return 1;
     }
 
+    private static double getAng(double alt) {
+        if (alt > 1500)
+            return 60;
+        if (alt > 1200)
+            return 50;
+        if (alt > 1000)
+            return 30;
+        return 0;
+    }
 
     // 14095, 955.5, 24.8, 2.0
     public static void main(String[] args) {
@@ -57,72 +75,30 @@ public class Bereshit_101 {
         double NN = 0.7; // rate[0,1]
         SpaceCraft craft = new SpaceCraft(vs, hs, ang, fuel, NN, dist, alt, time, dt, acc, weight);
 
-        PID pid_h = new PID(0.0004, 0.00003, 0.02);
-        PID pid_v = new PID(0.004, 0.0003, 0.012);
+        PID pid = new PID(0.014, 0.000000003, 0.2);
+        PID pid_ang = new PID(0.314, 0.00003, 0.13);
 
-        double thrustIncrV = 0;
-        double thrustIncrH = 0;
 
         // ***** main simulation loop ******
         while (craft.getAlt() > 0) {
             double desired_vs = getDvs(craft.getAlt());
             double desired_hs = getDhs(craft.getAlt());
-
+            double dsAngle = getAng(craft.getAlt());
 
             if (time % 10 == 0 || craft.getAlt() < 100) {
-                System.out.println(craft.getAlt() + ", " + craft.getVs() + ", " + desired_vs + ", " + craft.getHs() + ", " + desired_hs + ", " + craft.getAng() + ", " + craft.getAcc() + ", " + craft.getNN() + ", " + craft.getFuel());
+                System.out.println(craft.getAlt() + ", " + craft.getVs() + ", " + desired_vs + ", " + craft.getHs() + ", " + desired_hs + ", ang: " + craft.getAng() + " ,dang: " + dsAngle + ", " + craft.getAcc() + ", " + craft.getNN() + ", " + craft.getFuel());
             }
 
+            double thrustIncr = pid.update(craft.getVs() - desired_vs + craft.getHs() - desired_hs, craft.getDt());
+            double angIncr = pid_ang.update(dsAngle - craft.getAng(), craft.getDt());
 
-            if (craft.getHs() > 0) {
-                thrustIncrH = pid_h.update( craft.getHs() - desired_hs , craft.getDt());
-                craft.increaseThrust(thrustIncrH);
-            } else {
-                thrustIncrV = pid_v.update(craft.getVs() - desired_vs, craft.getDt());
-                craft.increaseAngle(-3);
-                craft.increaseThrust(thrustIncrV);
-            }
-            System.out.println("----------->" + thrustIncrH + "  " + thrustIncrV);
-
-
-//            if (thrustIncrH < 0 && thrustIncrV > 0) {
-//                craft.increaseAngle(-0.3 * craft.getDt());
-//            } else if (thrustIncrH > 0 && thrustIncrV < 0) {
-//                craft.increaseAngle(0.3 * craft.getDt());
-//            }
-
-            // over 2 km above the ground
-//            if (craft.getAlt() > 2000) {    // maintain a vertical speed of [20-25] m/s
-//                if (craft.getVs() > 25) {
-//                    craft.increaseThrust(0.003 * dt);
-//                } // more power for braking
-//                if (craft.getVs() < 20) {
-//                    craft.increaseThrust(-0.003 * dt);
-//                } // less power for braking
-//            }
-//            // lower than 2 km - horizontal speed should be close to zero
-//            else {
-//                if (craft.getAng() >= 0) {
-//                    craft.increaseAngle(-3);
-//                } // rotate to vertical position.
-//
-//                thrustIncrH = pid_h.update(craft.getHs() - desired_hs, craft.getDt());
-//                craft.increaseThrust(thrustIncrH);
-//
-//                if (craft.getAlt() < 125) { // very close to the ground!
-//                    craft.setNN(1); // maximum braking!
-//                    if (craft.getVs() < 5) {
-//                        craft.setNN(0.7);
-//                    } // if it is slow enough - go easy on the brakes
-//                }
-//            }
-//            if (craft.getAlt() < 5) { // no need to stop
-//                craft.setNN(0.4);
-//            }
+            craft.increaseAngle(angIncr);
+            craft.increaseThrust(thrustIncr);
+            System.out.println("----------->" + angIncr + "  " + thrustIncr );
 
             craft.computeNextStep();
         }
-        System.out.println(craft.getAlt() + ", " + craft.getVs()  + ", " + craft.getHs()  + ", " + craft.getAng() + ", " + craft.getAcc() + ", " + craft.getNN() + ", " + craft.getFuel());
+        System.out.println(craft.getAlt() + ", " + craft.getVs() + ", " + craft.getHs() + ", " + craft.getAng() + ", " + craft.getAcc() + ", " + craft.getNN() + ", " + craft.getFuel());
 
     }
 }

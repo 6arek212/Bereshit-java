@@ -47,6 +47,13 @@ public class SpaceCraft {
         if (val >= 0 && val <= 90) {
             this.ang = val;
         }
+        if (val > 90) {
+            this.ang = 90;
+        }
+
+        if (val < 0) {
+            this.ang = 0;
+        }
     }
 
 
