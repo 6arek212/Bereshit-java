@@ -12,6 +12,10 @@ angle, It's done by maintaining a specific vertical/horizontal speed and angle.
 - The starting point mimcs bereshit actual landing settings
 - Landing physics
 
+### Starting Settings
+
+<img width="600" height="400" src="https://user-images.githubusercontent.com/10331972/228526687-0e0682f3-efc2-4660-993b-51ebe20f7218.png"/>
+
 
 ## Besheshit Crash Landing Story
 
