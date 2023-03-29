@@ -3,6 +3,7 @@
 
 In this project we simulate a successful landing with bereshit spacecraft actual settings
 
+<img width="600" height="400" src="https://user-images.githubusercontent.com/10331972/228521956-ad967e3c-6475-4686-9ea7-b16fe0a81a49.png"/>
 
 ## About the simulation
 
@@ -13,6 +14,10 @@ angle, It's done by maintaining a specific vertical/horizontal speed and angle.
 
 
 ## Besheshit Crash Landing Story
+
+
+
+<img width="600" height="400" src="https://user-images.githubusercontent.com/10331972/228522415-fcd43bf2-dcb0-46ff-9372-8268b47ceb4d.jpeg"/>
 
 - At the start of the voyage a problem with the star tracking system
 was found to be corrupted which responsible for determining the ship angle
@@ -42,9 +47,11 @@ Therefor the system did not receive any acceleration data for about a second and
 - low cost materials
 - low experienced crew
 - A rushed mission (more testing needed)
-- 
+- System restarts
+- Data transfer block
+- Control commands were not hard coded in the system
 
-More info: 
+More info: https://github.com/6arek212/Bereshit-java/blob/main/explanation.pdf
 
 ## Team Members
 
